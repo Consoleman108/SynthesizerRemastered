@@ -3,6 +3,7 @@ package com.e23.synth;
 import com.e23.synth.utils.Utils;
 import org.lwjgl.openal.AL;
 import org.lwjgl.openal.ALC;
+import org.lwjgl.system.CallbackI;
 
 import java.util.function.Supplier;
 
@@ -26,10 +27,14 @@ public class AudioThred extends Thread
 
     AudioThred(Supplier<short[]> bufferSupplier)
     {
+        System.out.println("device = "+ device);
+        System.out.println("context = " + context);
+
         this.bufferSupplier = bufferSupplier;
         alcMakeContextCurrent(context);
         AL.createCapabilities(ALC.createCapabilities(device));
         source = alGenSources();
+        System.out.println("sourse = " + source);
 
         for (int i = 0; i < BUFFER_COUNT; i++)
         {
@@ -52,8 +57,12 @@ public class AudioThred extends Thread
     @Override
     public synchronized void run()
     {
+        System.out.println("Close = " + closed);
+        System.out.println("running = " + running);
         while (!closed) {
+            System.out.println("In while loop close");
             while (!running) {
+                System.out.println("In while loop running");
                 /*try
                 {
                     wait();
@@ -67,6 +76,7 @@ public class AudioThred extends Thread
                 int processedBuff = alGetSourcei(source, AL_BUFFERS_PROCESSED);
                 for (int i = 0; i < processedBuff; ++i) {
                     short[] samples = bufferSupplier.get();
+                    System.out.println("samples = " + samples);
                     if (samples == null) {
                         running = false;
                         break;
@@ -122,7 +132,7 @@ public class AudioThred extends Thread
     private void catchInternalException()
     {
         int err = alcGetError(device);
-        if (err!=ALC_NO_ERROR)
+        if (err != ALC_NO_ERROR)
         {
             throw new OpenALException(err);
         }

@@ -22,10 +22,11 @@ public class Synthesizer {
         for(int i = 0; i < AudioThred.BUFFER_SIZE; ++i)
         {
             s[i] = (short)(Short.MAX_VALUE * Math.sin((2 * Math.PI * 440) / AudioInfo.SAMPLE_RATE * wavePos++));
+            System.out.println(s[i]);
         }
         return s;
     }
-    ) ;
+    );
 
         Synthesizer()
         {
